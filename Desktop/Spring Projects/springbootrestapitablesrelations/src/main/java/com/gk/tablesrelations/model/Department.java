@@ -37,8 +37,12 @@ public class Department {
 //		@JoinColumn(name = "employee_id")
 //		private Employee employee;
 		
-		@OneToOne(mappedBy = "department")
+		@ManyToOne
+		@JoinColumn(name = "employee_id")
 		private Employee employee;
+		
+//		@OneToOne(mappedBy = "department") <-- One to one bidirectional
+//		private Employee employee;
 	
 	
 }

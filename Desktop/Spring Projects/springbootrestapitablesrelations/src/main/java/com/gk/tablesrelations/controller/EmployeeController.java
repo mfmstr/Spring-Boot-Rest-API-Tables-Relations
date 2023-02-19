@@ -1,5 +1,6 @@
 package com.gk.tablesrelations.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import com.gk.tablesrelations.model.Employee;
 import com.gk.tablesrelations.repository.DepartmentRepository;
 import com.gk.tablesrelations.repository.EmployeeRepository;
 import com.gk.tablesrelations.request.EmployeeRequest;
+import com.gk.tablesrelations.response.EmployeeResponse;
 import com.gk.tablesrelations.service.EmployeeService;
 
 import jakarta.validation.Valid;
@@ -36,22 +38,63 @@ public class EmployeeController {
 	@Autowired
 	private DepartmentRepository dRepository;
 	
-	@PostMapping("/employees")
-	public ResponseEntity<Employee> saveEmployee(@Valid @RequestBody EmployeeRequest eRequest){
+	@GetMapping("/readempl")
+	public ResponseEntity<List<EmployeeResponse>> getEmployees(){
 		
-		Department dept = new Department();
-		dept.setName(eRequest.getDepartment());
+		List<Employee> list = eRepository.findAll();
+		List<EmployeeResponse> responseList = new ArrayList<>();
 		
-		dept = dRepository.save(dept);
+		list.forEach(e -> {
+			EmployeeResponse eResponse = new EmployeeResponse();
+			eResponse.setId(e.getId());
+			eResponse.setEmployeeName(e.getName());
+			List<String> depts = new ArrayList<>();
+			for(Department d : e.getDepartments()) {
+				depts.add(d.getName());
+			}
+			eResponse.setDepartment(depts);
+			responseList.add(eResponse);
+		});
 		
-		Employee employee = new Employee(eRequest);
-		employee.setDepartment(dept);
-		
-		
-		
-		return new ResponseEntity<Employee>(eRepository.save(employee), HttpStatus.CREATED);
+		return new ResponseEntity<List<EmployeeResponse>>(responseList, HttpStatus.OK);
 		
 	}
+	
+	@PostMapping("/employees")
+	public ResponseEntity<String> saveEmployee(@Valid @RequestBody EmployeeRequest eRequest){
+	
+		Employee employee = new Employee(eRequest);
+		employee = eRepository.save(employee);
+		
+		for(String s : eRequest.getDepartment()) {
+			Department d = new Department();
+			d.setName(s);
+			d.setEmployee(employee);
+			
+			dRepository.save(d);
+		}
+		
+		return new ResponseEntity<String>("Record Saved Successfully!", HttpStatus.OK);
+		
+	}
+	
+// 	One to one BIDIRECTIONAL
+//	@PostMapping("/employees")
+//	public ResponseEntity<Employee> saveEmployee(@Valid @RequestBody EmployeeRequest eRequest){
+//		
+//		Department dept = new Department();
+//		dept.setName(eRequest.getDepartment());
+//		
+//		dept = dRepository.save(dept);
+//		
+//		Employee employee = new Employee(eRequest);
+//		employee.setDepartment(dept);
+//		
+//		
+//		
+//		return new ResponseEntity<Employee>(eRepository.save(employee), HttpStatus.CREATED);
+//		
+//	}
 	
 //	@PostMapping("/employees") <---------- One To Many Relationship
 //	public ResponseEntity<String> saveEmployee(@Valid @RequestBody EmployeeRequest eRequest){
