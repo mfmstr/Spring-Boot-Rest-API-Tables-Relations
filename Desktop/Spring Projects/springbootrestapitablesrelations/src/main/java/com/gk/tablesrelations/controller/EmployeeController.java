@@ -36,6 +36,25 @@ public class EmployeeController {
 	@Autowired
 	private DepartmentRepository dRepository;
 	
+	@PostMapping("/employees")
+	public ResponseEntity<String> saveEmployee(@Valid @RequestBody EmployeeRequest eRequest){
+		
+		Employee employee = new Employee(eRequest);
+		eRepository.save(employee);
+		
+		for(String s : eRequest.getDepartment()) {
+			Department d = new Department();
+			d.setName(s);
+			d.setEmployee(employee);
+			
+			dRepository.save(d);
+			
+		}
+		
+		return new ResponseEntity<String>("Record saved successfully", HttpStatus.CREATED);
+		
+	}
+	
 	@GetMapping("/employees")
 	public ResponseEntity<List<Employee>> getEmployees(@RequestParam Integer pageNumber, @RequestParam Integer pageSize) {
 		
@@ -57,23 +76,23 @@ public class EmployeeController {
 		
 	}
 	
-	@PostMapping("/employees")
-	public ResponseEntity<Employee> saveEmployee(@Valid @RequestBody EmployeeRequest eRequest) {
-		
-		Department dept = new Department();
-		dept.setName(eRequest.getDepartment());
-		
-		dRepository.save(dept);
-		
-		Employee employee = new Employee(eRequest);
-		employee.setDepartment(dept);
-		
-		eRepository.save(employee);
-		
-		return new ResponseEntity<Employee>(employee, HttpStatus.CREATED);
-		
-		
-	}
+//	@PostMapping("/employees") ONE TO ONE RELATIOSHIP
+//	public ResponseEntity<Employee> saveEmployee(@Valid @RequestBody EmployeeRequest eRequest) {
+//		
+//		Department dept = new Department();
+//		dept.setName(eRequest.getDepartment());
+//		
+//		dRepository.save(dept);
+//		
+//		Employee employee = new Employee(eRequest);
+//		employee.setDepartment(dept);
+//		
+//		eRepository.save(employee);
+//		
+//		return new ResponseEntity<Employee>(employee, HttpStatus.CREATED);
+//		
+//		
+//	}
 	
 	@PutMapping("/employees/{id}")
 	public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
@@ -83,14 +102,14 @@ public class EmployeeController {
 		
 	}
 	
-	@GetMapping("/employees/filter/{name}")
-	public ResponseEntity<List<Employee>> getEmployeesByDepartment(@PathVariable String name){
-		
-		// return new ResponseEntity<List<Employee>>(eRepository.findByDepartmentName(name), HttpStatus.OK);
-		
-		return new ResponseEntity<List<Employee>>(eRepository.getEmployeesByDepartmentName(name),HttpStatus.OK);
-		
-	}
+//	@GetMapping("/employees/filter/{name}") <---------- ONE TO ONE
+//	public ResponseEntity<List<Employee>> getEmployeesByDepartment(@PathVariable String name){
+//		
+//		// return new ResponseEntity<List<Employee>>(eRepository.findByDepartmentName(name), HttpStatus.OK);
+//		
+//		return new ResponseEntity<List<Employee>>(eRepository.getEmployeesByDepartmentName(name),HttpStatus.OK);
+//		
+//	}
 	
 }
 

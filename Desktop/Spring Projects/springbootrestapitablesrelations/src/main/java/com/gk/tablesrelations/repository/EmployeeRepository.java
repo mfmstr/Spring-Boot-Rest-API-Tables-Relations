@@ -12,8 +12,8 @@ import com.gk.tablesrelations.model.Employee;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long>, PagingAndSortingRepository<Employee, Long> {
 	
-	List<Employee> findByDepartmentName(String name);
-	
-	@Query("From Employee WHERE department.name = :name")
-	List<Employee> getEmployeesByDepartmentName(String name);
+//	List<Employee> findByDepartmentName(String name); ONE TO ONE 
+//	
+//	@Query("From Employee WHERE department.name = :name")
+//	List<Employee> getEmployeesByDepartmentName(String name);
 }
