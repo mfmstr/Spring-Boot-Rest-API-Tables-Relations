@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gk.tablesrelations.model.Department;
 import com.gk.tablesrelations.model.Employee;
+import com.gk.tablesrelations.repository.DepartmentRepository;
+import com.gk.tablesrelations.repository.EmployeeRepository;
+import com.gk.tablesrelations.request.EmployeeRequest;
 import com.gk.tablesrelations.service.EmployeeService;
 
 import jakarta.validation.Valid;
@@ -24,6 +29,11 @@ public class EmployeeController {
 	
 	@Autowired
 	private EmployeeService eService;
+	
+	private EmployeeRepository eRepository;
+	
+	@Autowired
+	private DepartmentRepository dRepository;
 	
 	@GetMapping("/employees")
 	public ResponseEntity<List<Employee>> getEmployees(@RequestParam Integer pageNumber, @RequestParam Integer pageSize) {
@@ -47,9 +57,20 @@ public class EmployeeController {
 	}
 	
 	@PostMapping("/employees")
-	public ResponseEntity<Employee> saveEmployee(@Valid @RequestBody Employee employee) {
+	public ResponseEntity<Employee> saveEmployee(@Valid @RequestBody EmployeeRequest eRequest) {
 		
-		return new ResponseEntity<Employee>(eService.saveEmployee(employee), HttpStatus.CREATED);
+		Department dept = new Department();
+		dept.setName(eRequest.getDepartment());
+		
+		dRepository.save(dept);
+		
+		Employee employee = new Employee(eRequest);
+		employee.setDepartment(dept);
+		
+		eRepository.save(employee);
+		
+		return new ResponseEntity<Employee>(employee, HttpStatus.CREATED);
+		
 		
 	}
 	
