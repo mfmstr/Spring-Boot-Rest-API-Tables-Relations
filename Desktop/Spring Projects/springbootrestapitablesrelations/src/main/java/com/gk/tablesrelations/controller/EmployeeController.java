@@ -30,6 +30,7 @@ public class EmployeeController {
 	@Autowired
 	private EmployeeService eService;
 	
+	@Autowired
 	private EmployeeRepository eRepository;
 	
 	@Autowired
