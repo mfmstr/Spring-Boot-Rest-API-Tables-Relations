@@ -36,9 +36,9 @@ public class Employee {
 	@NotBlank(message = "Name should not be Null")
 	private String name;
 	
-//	@JoinColumn(name = "department_id") IN CASE OF ONE TO ONE RELATIONSHIP
-//	@OneToOne
-//	private Department department;
+	@JoinColumn(name = "department_id")
+	@OneToOne
+	private Department department;
 	
 	public Employee(EmployeeRequest req) {
 		this.name = req.getName();

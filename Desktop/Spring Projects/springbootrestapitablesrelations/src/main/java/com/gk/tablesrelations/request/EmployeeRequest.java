@@ -13,6 +13,6 @@ public class EmployeeRequest {
 	
 //	private String department; IN CASE OF ONE TO ONE RELATIONSHIP
 	
-	private List<String> department;
+	private String department;
 	
 }

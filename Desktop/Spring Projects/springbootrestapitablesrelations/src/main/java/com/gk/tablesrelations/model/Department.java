@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -32,11 +33,12 @@ public class Department {
 		@NotBlank(message = "Name should not be Null")
 		private String name;
 		
-		@ManyToOne
-		@JoinColumn(name = "employee_id")
+//		@ManyToOne One To Many Relationship
+//		@JoinColumn(name = "employee_id")
+//		private Employee employee;
+		
+		@OneToOne(mappedBy = "department")
 		private Employee employee;
-		
-		
 	
 	
 }

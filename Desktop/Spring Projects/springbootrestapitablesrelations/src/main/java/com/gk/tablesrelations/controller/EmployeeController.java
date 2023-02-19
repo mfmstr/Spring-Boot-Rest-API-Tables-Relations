@@ -37,23 +37,40 @@ public class EmployeeController {
 	private DepartmentRepository dRepository;
 	
 	@PostMapping("/employees")
-	public ResponseEntity<String> saveEmployee(@Valid @RequestBody EmployeeRequest eRequest){
+	public ResponseEntity<Employee> saveEmployee(@Valid @RequestBody EmployeeRequest eRequest){
+		
+		Department dept = new Department();
+		dept.setName(eRequest.getDepartment());
+		
+		dept = dRepository.save(dept);
 		
 		Employee employee = new Employee(eRequest);
-		eRepository.save(employee);
+		employee.setDepartment(dept);
 		
-		for(String s : eRequest.getDepartment()) {
-			Department d = new Department();
-			d.setName(s);
-			d.setEmployee(employee);
-			
-			dRepository.save(d);
-			
-		}
 		
-		return new ResponseEntity<String>("Record saved successfully", HttpStatus.CREATED);
+		
+		return new ResponseEntity<Employee>(eRepository.save(employee), HttpStatus.CREATED);
 		
 	}
+	
+//	@PostMapping("/employees") <---------- One To Many Relationship
+//	public ResponseEntity<String> saveEmployee(@Valid @RequestBody EmployeeRequest eRequest){
+//		
+//		Employee employee = new Employee(eRequest);
+//		eRepository.save(employee);
+//		
+//		for(String s : eRequest.getDepartment()) {
+//			Department d = new Department();
+//			d.setName(s);
+//			d.setEmployee(employee);
+//			
+//			dRepository.save(d);
+//			
+//		}
+//		
+//		return new ResponseEntity<String>("Record saved successfully", HttpStatus.CREATED);
+//		
+//	}
 	
 	@GetMapping("/employees")
 	public ResponseEntity<List<Employee>> getEmployees(@RequestParam Integer pageNumber, @RequestParam Integer pageSize) {
